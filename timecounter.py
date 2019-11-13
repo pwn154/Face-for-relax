@@ -9,7 +9,7 @@ while True:
         print(elapse)
     else:
         print('Rest your eye!')
-        value = easygui.ynbox('พ่อมึงตาย', 'สวัสดี',('yes','no'))
+        value = easygui.ynbox('Rest your eye!', 'สวัสดี',('yes','no'))
         if value == False:
             break
         elapse = 0
