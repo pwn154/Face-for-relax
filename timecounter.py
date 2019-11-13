@@ -9,8 +9,10 @@ while True:
         print(elapse)
     else:
         print('Rest your eye!')
-        value = easygui.ynbox('Rest your eye!', 'สวัสดี',('yes','no'))
+        value = easygui.ynbox('Rest your eye!', 'Face for relax',('yes','no'))
         if value == False:
             break
+        else:
+            time.sleep(5)
         elapse = 0
         last_time = time.time()
