@@ -3,7 +3,7 @@ import time
 import easygui
 
 faceCascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
-eyeCascade = cv2.CascadeClassifier("haarcascade_eye.xml")
+#eyeCascade = cv2.CascadeClassifier("haarcascade_eye.xml")
 last_time = time.time()
 elapse = 0
 
@@ -19,7 +19,7 @@ def draw_boundary(img, classifier, scaleFactor, minNeightbors, color, text): #co
 
 def detect(img, faceCascade):
     img, coordinate = draw_boundary(img, faceCascade, 1.1, 10, (0,255,0), "Face")
-    img, coordinate = draw_boundary(img, eyeCascade, 1.1, 12, (255,0,0), "Eye")
+    #img, coordinate = draw_boundary(img, eyeCascade, 1.1, 12, (255,0,0), "Eye")
     return img, coordinate
 
 cap = cv2.VideoCapture(0) # 0 = internal webcam, -1 = external webcam
@@ -30,19 +30,19 @@ while True:
     cv2.imshow('frame', frame) #แสดง frame
     if (cv2.waitKey(100) & 0xFF == 27): #27 = esc  >>> ปิดหน้าต่าง
         break
-    if elapse <= 10:
-        if coordinate != None:
+    if elapse <= 20:
+        if coordinate != []:
             elapse = time.time() - last_time #ระบุเวลาที่ผ่านไป
             print(elapse)
         else:
-            last_time = time.time() + elapse
+            last_time = time.time() - elapse
     else:
         print('Rest your eye!')
         value = easygui.ynbox('Rest your eye!', 'Face for relax',('yes','no')) #ตัวเลือก
         if value == False:
             break
         else:
-            time.sleep(5) #ระยะเวลาการพัก
+            time.sleep(2) #ระยะเวลาการพัก
         elapse = 0
         last_time = time.time()
 
