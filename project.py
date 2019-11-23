@@ -27,8 +27,8 @@ while True:
         ret, frame = cap.read() # อ่านภาพจากกล้องมาทีละ frame, 1 loop = 1 frame
         frame = detect(frame, faceCascade)
         cv2.imshow('frame', frame) #แสดง frame
-        else:
-            print('Rest your eye!')
+    else:
+        print('Rest your eye!')
         value = easygui.ynbox('Rest your eye!', 'Face for relax',('yes','no')) #ตัวเลือก
         if value == False:
             break
