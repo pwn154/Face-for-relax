@@ -1,6 +1,6 @@
 import cv2
 import time
-from easygui import *
+import easygui
 
 faceCascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
 eyeCascade = cv2.CascadeClassifier("haarcascade_eye.xml")
