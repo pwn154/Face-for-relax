@@ -34,6 +34,8 @@ while True:
         if coordinate != None:
             elapse = time.time() - last_time #ระบุเวลาที่ผ่านไป
             print(elapse)
+        else:
+            last_time = time.time() + elapse
     else:
         print('Rest your eye!')
         value = easygui.ynbox('Rest your eye!', 'Face for relax',('yes','no')) #ตัวเลือก
