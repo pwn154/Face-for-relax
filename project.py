@@ -3,7 +3,6 @@ import time
 import easygui
 
 faceCascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
-#eyeCascade = cv2.CascadeClassifier("haarcascade_eye.xml")
 last_time = time.time()
 elapse = 0
 
@@ -19,7 +18,6 @@ def draw_boundary(img, classifier, scaleFactor, minNeightbors, color, text): #co
 
 def detect(img, faceCascade):
     img, coordinate = draw_boundary(img, faceCascade, 1.1, 10, (0,255,0), "Face")
-    #img, coordinate = draw_boundary(img, eyeCascade, 1.1, 12, (255,0,0), "Eye")
     return img, coordinate
 
 cap = cv2.VideoCapture(0) # 0 = internal webcam, -1 = external webcam
