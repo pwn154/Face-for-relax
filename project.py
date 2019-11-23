@@ -23,12 +23,15 @@ def detect(img, faceCascade):
 cap = cv2.VideoCapture(0) # 0 = internal webcam, -1 = external webcam
 
 while True:
+    ret, frame = cap.read() # อ่านภาพจากกล้องมาทีละ frame, 1 loop = 1 frame
+    frame = detect(frame, faceCascade)
+    cv2.imshow('frame', frame) #แสดง frame
+    if (cv2.waitKey(100) & 0xFF == 27): #27 = esc  >>> ปิดหน้าต่าง
+        break
     if elapse <= 10:
-        elapse = time.time() - last_time #ระบุเวลาที่ผ่านไป
-        print(elapse)
-        ret, frame = cap.read() # อ่านภาพจากกล้องมาทีละ frame, 1 loop = 1 frame
-        frame = detect(frame, faceCascade)
-        cv2.imshow('frame', frame) #แสดง frame
+        if (x,y,w,h) != None:
+            elapse = time.time() - last_time #ระบุเวลาที่ผ่านไป
+            print(elapse)
     else:
         print('Rest your eye!')
         value = easygui.ynbox('Rest your eye!', 'Face for relax',('yes','no')) #ตัวเลือก
@@ -38,5 +41,6 @@ while True:
             time.sleep(5) #ระยะเวลาการพัก
         elapse = 0
         last_time = time.time()
+
 cap.release()
 cv2.destroyAllWindows()
