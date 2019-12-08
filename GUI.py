@@ -12,8 +12,5 @@ button.pack()
 gui.mainloop()
 
 
-
-#สามารถกำหนดเวลาได้ภายในนี้
 #มีปุ่ม Start Stop
 #มีเสียง มี Pop up desktop
-#
