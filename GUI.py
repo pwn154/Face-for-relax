@@ -18,4 +18,5 @@ def show_frame():
     lmain.after(100, show_frame)
 
 show_frame()
+button = Button(gui, text='Stop', width=25, command=gui.destroy).pack()
 gui.mainloop()
