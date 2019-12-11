@@ -3,7 +3,7 @@ import cv2
 from PIL import Image, ImageTk
 
 gui = Tk()
-gui.geometry('650x500')#ขนาดGUI
+gui.geometry('650x600')#ขนาดGUI
 mlabel=Label(text="Face For Relax",fg="#FFFF00",bg="black").pack()
 lmain = Label(gui)
 lmain.pack()
