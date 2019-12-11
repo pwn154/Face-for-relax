@@ -18,6 +18,6 @@ def show_frame():
     lmain.after(100, show_frame)
 
 show_frame()
-bottom1 = Button(gui, text='Start', width=25, commnand=#เรียกใช้ฟังชั่นนับ)
+bottom1 = Button(gui, text='Start', width=25, commnand=gui.destroy).pack()
 button2 = Button(gui, text='Stop', width=25, command=gui.destroy).pack()
 gui.mainloop()
