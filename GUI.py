@@ -17,9 +17,6 @@ def show_frame():
     lmain.imgtk = imgtk
     lmain.configure(image=imgtk)
     lmain.after(100, show_frame)
-def detect(img, faceCascade):
-    img, coordinate = draw_boundary(img, faceCascade, 1.1, 10, (0,255,0), "Face")
-    return img, coordinate
 def popup_bonus():
     win = Toplevel()
     win.wm_title("About us")
