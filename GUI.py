@@ -1,16 +1,20 @@
-from tkinter import *
-##code
-### StarT Gui ###
-gui=Tk()
+import tkinter as tk
+import cv2
+from PIL import Image, ImageTk
+
+gui = tk.Tk()
 gui.geometry('650x500')
-gui.title("Face For Relax")
-gui.configure(background='#BDBDBD')
-mlabel=Label(text="Face For Relax",fg="#FFFF00",bg="black").pack()
-###photo
-button = Button(gui, text='Stop', width=25, command=gui.destroy)
-button.pack() 
+lmain = tk.Label(gui)
+lmain.pack()
+cap = cv2.VideoCapture(0)
+def show_frame():
+    _, frame = cap.read()
+    cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
+    img = Image.fromarray(cv2image)
+    imgtk = ImageTk.PhotoImage(image=img)
+    lmain.imgtk = imgtk
+    lmain.configure(image=imgtk)
+    lmain.after(100, show_frame)
+
+show_frame()
 gui.mainloop()
-
-
-#มีปุ่ม Start Stop
-#มีเสียง มี Pop up desktop
