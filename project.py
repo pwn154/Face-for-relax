@@ -25,6 +25,7 @@ aboutus_frame = Frame(gui)
 aboutus_frame.pack(side=BOTTOM, pady=10)
 
 def draw_boundary(img, classifier, scaleFactor, minNeightbors, color, text): #color(BGR) >> Blue Green Red
+    """วาดกรอบสี่เหลี่ยมเพื่อเป็นบล๊อคสำหรับตรวจจับใบหน้า"""
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) #แปลงภาพสีเป็นภาพขาวดำ
     features = classifier.detectMultiScale(gray, scaleFactor, minNeightbors)
     coordinate = []
@@ -38,15 +39,6 @@ def detect(img, faceCascade):
     img, coordinate = draw_boundary(img, faceCascade, 1.1, 10, (0,255,0), "Face")
     return img, coordinate
 
-def show_frame():
-    ret, frame = cap.read()
-    frame, coordinate = detect(frame, faceCascade)
-    cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
-    imgtk = ImageTk.PhotoImage(image = Image.fromarray(cv2image))
-    lmain.imgtk = imgtk
-    lmain.configure(image=imgtk)
-    lmain.after(100, show_frame)
-
 def popup_showinfo():
     messagebox.showinfo(title='Group Member', message=
 '62070021 Kanasin Amoornkittisarn\n\
@@ -55,31 +47,31 @@ def popup_showinfo():
 62070147 Pattarapol Ngaorattanaphanthikun\n\
 62070154 Puwanut Janmee')
 
-# while True:
-#     ret, frame = cap.read() # อ่านภาพจากกล้องมาทีละ frame, 1 loop = 1 frame
-#     frame, coordinate = detect(frame, faceCascade)
-#     cv2.imshow('frame', frame) #แสดง frame
-#     if (cv2.waitKey(100) & 0xFF == 27): #27 = esc  >>> ปิดหน้าต่าง
-#         break
-#     if elapse <= 20:
-#         if coordinate != []:
-#             elapse = time.time() - last_time #ระบุเวลาที่ผ่านไป
-#             print(elapse)
-#         else:
-#             last_time = time.time() - elapse
-#     else:
-#         print('Rest your eye!')
-#         value = easygui.ynbox('Rest your eye!', 'Face for relax',('yes','no')) #ตัวเลือก
-#         if value == False:
-#             break
-#         else:
-#             time.sleep(2) #ระยะเวลาการพัก
-#         elapse = 0
-#         last_time = time.time()
+def timecount():
+    elapse = 0
+    last_time = time.time()
+    while True:
+        ret, frame = cap.read() # อ่านภาพจากกล้องมาทีละ frame, 1 loop = 1 frame
+        frame, coordinate = detect(frame, faceCascade)
+        if (cv2.waitKey(100) & 0xFF == 27): #27 = esc  >>> ปิดหน้าต่าง
+            break
+        if elapse <= 20:
+            if coordinate != []:
+                elapse = time.time() - last_time #ระบุเวลาที่ผ่านไป
+                print(elapse)
+            else:
+                last_time = time.time() - elapse
+        else:
+            print('Rest your eye!')
+            value = easygui.ynbox('Rest your eye!', 'Face for relax',('yes','no')) #ตัวเลือก
+            if value == False:
+                break
+            else:
+                time.sleep(2) #ระยะเวลาการพัก
+            elapse = 0
+            last_time = time.time()
 
-show_frame()
-
-ButtonStart = Button(startstop_frame, text='Start', command=gui.destroy).pack(side=LEFT, padx=20)
+ButtonStart = Button(startstop_frame, text='Start', command=timecount).pack(side=LEFT, padx=20)
 ButtonStop = Button(startstop_frame, text='Stop', command=gui.destroy).pack(side=LEFT, padx=20)
 ButtonAbout = Button(aboutus_frame, text='About', command=popup_showinfo).pack(side=BOTTOM)
 
