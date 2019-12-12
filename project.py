@@ -8,6 +8,7 @@ from PIL import Image, ImageTk
 faceCascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
 last_time = time.time()
 elapse = 0
+mode = 0
 cap = cv2.VideoCapture(0) # 0 = internal webcam, -1 = external webcam
 width, height = 800, 600
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
@@ -49,15 +50,12 @@ def popup_showinfo():
 62070147 Pattarapol Ngaorattanaphanthikun\n\
 62070154 Puwanut Janmee')
 
-def timecount():
-    """นับเวลาจากการจับใบหน้า แล้วแสดงป็อปอัพเมื่อถึงเวลาที่กำหนด"""
-    elapse = 0
-    last_time = time.time()
-    while True:
-        ret, frame = cap.read() # อ่านภาพจากกล้องมาทีละ frame, 1 loop = 1 frame
+def show_frame():
+    """show each frame and count time when in start mode"""
+    global elapse, last_time
+    ret, frame = cap.read()
+    if mode == 1:#mode Start
         frame, coordinate = detect(frame, faceCascade)
-        if (cv2.waitKey(100) & 0xFF == 27): #27 = esc  >>> ปิดหน้าต่าง
-            break
         if elapse <= 20:
             if coordinate != []:
                 elapse = time.time() - last_time #ระบุเวลาที่ผ่านไป
@@ -68,14 +66,27 @@ def timecount():
             print('Rest your eye!')
             value = easygui.ynbox('Rest your eye!', 'Face for relax',('yes','no')) #ตัวเลือก
             if value == False:
-                break
+                change_mode(0)
             else:
                 time.sleep(2) #ระยะเวลาการพัก
-            elapse = 0
-            last_time = time.time()
+                elapse = 0
+                last_time = time.time()
+    else:#mode Reset
+        elapse = 0
+        last_time = time.time()
+    cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
+    imgtk = ImageTk.PhotoImage(image = Image.fromarray(cv2image))
+    lmain.imgtk = imgtk
+    lmain.configure(image=imgtk)
+    lmain.after(100, show_frame)
 
-ButtonStart = Button(startstop_frame, text='Start', command=timecount).pack(side=LEFT, padx=20)#ปุ่มกดจับเวลา
-ButtonStop = Button(startstop_frame, text='Stop', command=gui.destroy).pack(side=LEFT, padx=20)#ปุ่มหยุดโปรแกรม
+def change_mode(value):
+    global mode
+    mode = value
+
+show_frame()
+ButtonStart = Button(startstop_frame, text='Start', command=lambda *args: change_mode(1)).pack(side=LEFT, padx=20)#ปุ่มกดจับเวลา
+ButtonStop = Button(startstop_frame, text='Stop', command=lambda *args: change_mode(0)).pack(side=LEFT, padx=20)#ปุ่มหยุดโปรแกรม
 ButtonAbout = Button(aboutus_frame, text='About', command=popup_showinfo).pack(side=BOTTOM)#ปุ่มแสดงข้อมูลรายชื่อ
 
 gui.mainloop()
