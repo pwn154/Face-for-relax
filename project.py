@@ -36,10 +36,12 @@ def draw_boundary(img, classifier, scaleFactor, minNeightbors, color, text): #co
     return img, coordinate
 
 def detect(img, faceCascade):
+    """การตวจจับใบหน้า"""
     img, coordinate = draw_boundary(img, faceCascade, 1.1, 10, (0,255,0), "Face")
     return img, coordinate
 
 def popup_showinfo():
+    """แสดงข้อมูลรายชื่อสมาชิกของกลุ่ม"""
     messagebox.showinfo(title='Group Member', message=
 '62070021 Kanasin Amoornkittisarn\n\
 62070090 Tatchaphon Sriargardkraisang\n\
