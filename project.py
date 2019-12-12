@@ -59,7 +59,7 @@ def show_frame():
         if elapse <= 20:
             if coordinate != []:
                 elapse = time.time() - last_time #ระบุเวลาที่ผ่านไป
-                print(elapse)
+                print('%d'%elapse)
             else:
                 last_time = time.time() - elapse
         else:
