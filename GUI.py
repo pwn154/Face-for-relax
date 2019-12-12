@@ -1,7 +1,8 @@
 from tkinter import *
 import cv2
 from PIL import Image, ImageTk
-from tkinter.messagebox import showinfo
+from tkinter import messagebox
+
 gui = Tk()
 gui.wm_title('Face For Relax')
 gui.geometry('650x600')#ขนาดGUI
@@ -9,6 +10,7 @@ gui.configure(background='#000000')
 mlabel=Label(text="Face For Relax",fg="#FFFF00", bg='#000000').pack()
 lmain = Label(gui)
 lmain.pack()
+
 cap = cv2.VideoCapture(0)
 def show_frame():
     _, frame = cap.read()
@@ -18,21 +20,18 @@ def show_frame():
     lmain.imgtk = imgtk
     lmain.configure(image=imgtk)
     lmain.after(100, show_frame)
+
 def popup_showinfo():
-    showinfo('My Group', 'Kanasin Amoornkittisarn 62070021\nTatchaphon Sriargardkraisang 62070090\nPrathan Nawieng 62070113\nPattarapol Ngaorattanaphanthikun 62070147\nPuwanut Janmee 62070154')
-class Application(Frame):
+    messagebox.showinfo('Group Member',
+'62070021 Kanasin Amoornkittisarn\n\
+62070090 Tatchaphon Sriargardkraisang\n\
+62070113 Prathan Nawieng\n\
+62070147 Pattarapol Ngaorattanaphanthikun\n\
+62070154 Puwanut Janmee')
 
-    def __init__(self, master):
-        Frame.__init__(self, master)
-        self.pack()
-
-        
-        self.button_showinfo = Button(self, text="Start", command=gui.destroy)
-        self.button_showinfo.pack()
-        
-        self.button_showinfo = Button(self, text="Show Info", command=popup_showinfo)
-        self.button_showinfo.pack()
-
-app = Application(gui)
 show_frame()
+
+Button1 = Button(text='Start', command=gui.destroy).pack()
+Button2 = Button(text='About', command=popup_showinfo).pack()
+
 gui.mainloop()
