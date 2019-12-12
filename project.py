@@ -44,7 +44,7 @@ def detect(img, faceCascade):
 def popup_showinfo():
     """แสดงข้อมูลรายชื่อสมาชิกของกลุ่ม"""
     messagebox.showinfo(title='Group Member', message=
-'62070021 Kanasin Amoornkittisarn\n\
+'62070021 Kanasin Amornkittisarn\n\
 62070090 Tatchaphon Sriargardkraisang\n\
 62070113 Prathan Nawieng\n\
 62070147 Pattarapol Ngaorattanaphanthikun\n\
