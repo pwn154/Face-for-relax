@@ -50,6 +50,7 @@ def popup_showinfo():
 62070154 Puwanut Janmee')
 
 def timecount():
+    """นับเวลาจากการจับใบหน้า แล้วแสดงป็อปอัพเมื่อถึงเวลาที่กำหนด"""
     elapse = 0
     last_time = time.time()
     while True:
@@ -73,8 +74,8 @@ def timecount():
             elapse = 0
             last_time = time.time()
 
-ButtonStart = Button(startstop_frame, text='Start', command=timecount).pack(side=LEFT, padx=20)
-ButtonStop = Button(startstop_frame, text='Stop', command=gui.destroy).pack(side=LEFT, padx=20)
-ButtonAbout = Button(aboutus_frame, text='About', command=popup_showinfo).pack(side=BOTTOM)
+ButtonStart = Button(startstop_frame, text='Start', command=timecount).pack(side=LEFT, padx=20)#ปุ่มกดจับเวลา
+ButtonStop = Button(startstop_frame, text='Stop', command=gui.destroy).pack(side=LEFT, padx=20)#ปุ่มหยุดโปรแกรม
+ButtonAbout = Button(aboutus_frame, text='About', command=popup_showinfo).pack(side=BOTTOM)#ปุ่มแสดงข้อมูลรายชื่อ
 
 gui.mainloop()
