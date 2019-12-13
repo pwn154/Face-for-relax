@@ -8,7 +8,7 @@ from PIL import Image, ImageTk
 faceCascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
 last_time = time.time()
 elapse = 0
-mode = 0
+state = 0
 cap = cv2.VideoCapture(0) # 0 = internal webcam, -1 = external webcam
 width, height = 800, 600
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
@@ -51,10 +51,10 @@ def popup_showinfo():
 62070154 Puwanut Janmee')
 
 def show_frame():
-    """show each frame and count time when in start mode"""
+    """show each frame and count time when in start state"""
     global elapse, last_time
     ret, frame = cap.read()
-    if mode == 1:#mode Start
+    if state == 1:#state Start
         frame, coordinate = detect(frame, faceCascade)
         if elapse <= 20:
             if coordinate != []:
@@ -66,27 +66,33 @@ def show_frame():
             print('Rest your eye!')
             value = easygui.ynbox('Rest your eye!', 'Face for relax',('yes','no')) #ตัวเลือก
             if value == False:
-                change_mode(0)
+                change_state(0)
             else:
                 time.sleep(2) #ระยะเวลาการพัก
                 elapse = 0
                 last_time = time.time()
-    else:#mode Reset
+    else:#state Reset
         elapse = 0
         last_time = time.time()
     cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
     imgtk = ImageTk.PhotoImage(image = Image.fromarray(cv2image))
     lmain.imgtk = imgtk
     lmain.configure(image=imgtk)
-    lmain.after(100, show_frame)
 
-def change_mode(value):
-    global mode
-    mode = value
+    # delay = time (milliseconds)
+    if state == 1:
+        delay = 100 #สามารถลด Delay ลงได้ แต่จะทำให้เกิดการประมวลผลถี่เกินความจำเป็น
+    else:
+        delay = 1
+    lmain.after(delay, show_frame)
+
+def change_state(value):
+    global state
+    state = value
 
 show_frame()
-ButtonStart = Button(startstop_frame, text='Start', command=lambda *args: change_mode(1)).pack(side=LEFT, padx=20)#ปุ่มกดจับเวลา
-ButtonStop = Button(startstop_frame, text='Stop', command=lambda *args: change_mode(0)).pack(side=LEFT, padx=20)#ปุ่มหยุดโปรแกรม
+ButtonStart = Button(startstop_frame, text='Start', command=lambda *args: change_state(1)).pack(side=LEFT, padx=20)#ปุ่มกดจับเวลา
+ButtonStop = Button(startstop_frame, text='Stop', command=lambda *args: change_state(0)).pack(side=LEFT, padx=20)#ปุ่มหยุดโปรแกรม
 ButtonAbout = Button(aboutus_frame, text='About', command=popup_showinfo).pack(side=BOTTOM)#ปุ่มแสดงข้อมูลรายชื่อ
 
 gui.mainloop()
