@@ -31,7 +31,12 @@ def popup_showinfo():
 
 show_frame()
 
-Button1 = Button(text='Start', command=gui.destroy).pack()
-Button2 = Button(text='About', command=popup_showinfo).pack()
+ButtonStart = Button(startstop_frame, width=20, bg='lightgreen', text='Start', command=lambda *args: change_state(1))
+ButtonStart.pack(side=LEFT, padx=20)#ปุ่มกดจับเวลา
 
+ButtonReset = Button(startstop_frame, width=20, bg='red', text='Reset', command=lambda *args: change_state(0))
+ButtonReset.pack(side=LEFT, padx=20)#ปุ่มหยุดโปรแกรม
+
+ButtonAbout = Button(aboutus_frame, text='About us', command=popup_showinfo)
+ButtonAbout.pack()#ปุ่มแสดงข้อมูลรายชื่อ
 gui.mainloop()
