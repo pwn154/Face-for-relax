@@ -4,6 +4,7 @@ import datetime
 from tkinter import *
 from tkinter import messagebox
 from PIL import Image, ImageTk
+from pygame import mixer
 
 faceCascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
 last_time = time.time()
@@ -14,6 +15,8 @@ cap = cv2.VideoCapture(0) # 0 = internal webcam, -1 = external webcam
 width, height = 800, 600
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
+
+mixer.init()
 
 gui = Tk()
 gui.title('Face For Relax')
@@ -63,17 +66,19 @@ def show_frame():
     ret, frame = cap.read()
     if state == 1:#state Start
         frame, coordinate = detect(frame, faceCascade)
-        if timecounter <= 20:
+        if timecounter <= 10:
             if coordinate != []:
                 timecounter = time.time() - last_time #ระบุเวลาที่ผ่านไป
             else:
                 last_time = time.time() - timecounter
         else:
+            mixer.music.load('Success_ding_sound.mp3')
+            mixer.music.play()
             value = messagebox.askyesno(title='Face for relax', message='Are you going to rest?') #ตัวเลือก
             if value == True:
                 change_state(0)
             else:
-                time.sleep(2) #ระยะเวลาการพัก
+                time.sleep(2) #ระยะเวลาการพักก่อนที่เริ่ม detect หน้าอีกครั้ง
                 timecounter = 0
                 last_time = time.time()
     else:#state Reset
