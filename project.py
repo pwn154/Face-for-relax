@@ -1,29 +1,36 @@
 import cv2
 import time
-import easygui
+import datetime
 from tkinter import *
 from tkinter import messagebox
 from PIL import Image, ImageTk
 
 faceCascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
 last_time = time.time()
-elapse = 0
+timecounter = 0
 state = 0
+
 cap = cv2.VideoCapture(0) # 0 = internal webcam, -1 = external webcam
 width, height = 800, 600
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
 
 gui = Tk()
-gui.wm_title('Face For Relax')
+gui.title('Face For Relax')
 #gui.configure(background='#ffffff')
 mlabel = Label(text="Face For Relax", fg="#FFFF00", bg='#000000').pack()
+
 lmain = Label(gui)
 lmain.pack()
+
+timelabel = Label(gui, text=timecounter, bg="lightblue", width=20, relief="solid")
+timelabel.pack(pady=10)
+
 startstop_frame = Frame(gui)
-startstop_frame.pack(pady=10)
+startstop_frame.pack(pady=5)
+
 aboutus_frame = Frame(gui)
-aboutus_frame.pack(side=BOTTOM, pady=10)
+aboutus_frame.pack(side=BOTTOM, pady=5)
 
 def draw_boundary(img, classifier, scaleFactor, minNeightbors, color, text): #color(BGR) >> Blue Green Red
     """วาดกรอบสี่เหลี่ยมเพื่อเป็นบล๊อคสำหรับตรวจจับใบหน้า"""
@@ -52,28 +59,30 @@ def popup_showinfo():
 
 def show_frame():
     """show each frame and count time when in start state"""
-    global elapse, last_time
+    global timecounter, last_time
     ret, frame = cap.read()
     if state == 1:#state Start
         frame, coordinate = detect(frame, faceCascade)
-        if elapse <= 20:
+        if timecounter <= 20:
             if coordinate != []:
-                elapse = time.time() - last_time #ระบุเวลาที่ผ่านไป
-                print('%d'%elapse)
+                timecounter = time.time() - last_time #ระบุเวลาที่ผ่านไป
             else:
-                last_time = time.time() - elapse
+                last_time = time.time() - timecounter
         else:
-            print('Rest your eye!')
-            value = easygui.ynbox('Rest your eye!', 'Face for relax',('yes','no')) #ตัวเลือก
-            if value == False:
+            value = messagebox.askyesno(title='Face for relax', message='Are you going to rest?') #ตัวเลือก
+            if value == True:
                 change_state(0)
             else:
                 time.sleep(2) #ระยะเวลาการพัก
-                elapse = 0
+                timecounter = 0
                 last_time = time.time()
     else:#state Reset
-        elapse = 0
+        timecounter = 0
         last_time = time.time()
+
+    timeformat = str(datetime.timedelta(seconds=int(timecounter)))
+    timelabel.configure(text="Time: %s"%timeformat)
+
     cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
     imgtk = ImageTk.PhotoImage(image = Image.fromarray(cv2image))
     lmain.imgtk = imgtk
@@ -83,7 +92,7 @@ def show_frame():
     if state == 1:
         delay = 100 #สามารถลด Delay ลงได้ แต่จะทำให้เกิดการประมวลผลถี่เกินความจำเป็น
     else:
-        delay = 1
+        delay = 10
     lmain.after(delay, show_frame)
 
 def change_state(value):
@@ -91,8 +100,14 @@ def change_state(value):
     state = value
 
 show_frame()
-ButtonStart = Button(startstop_frame, text='Start', command=lambda *args: change_state(1)).pack(side=LEFT, padx=20)#ปุ่มกดจับเวลา
-ButtonStop = Button(startstop_frame, text='Stop', command=lambda *args: change_state(0)).pack(side=LEFT, padx=20)#ปุ่มหยุดโปรแกรม
-ButtonAbout = Button(aboutus_frame, text='About', command=popup_showinfo).pack(side=BOTTOM)#ปุ่มแสดงข้อมูลรายชื่อ
+
+ButtonStart = Button(startstop_frame, width=20, bg='lightgreen', text='Start', command=lambda *args: change_state(1))
+ButtonStart.pack(side=LEFT, padx=20)#ปุ่มกดจับเวลา
+
+ButtonReset = Button(startstop_frame, width=20, bg='red', text='Reset', command=lambda *args: change_state(0))
+ButtonReset.pack(side=LEFT, padx=20)#ปุ่มหยุดโปรแกรม
+
+ButtonAbout = Button(aboutus_frame, text='About us', command=popup_showinfo)
+ButtonAbout.pack()#ปุ่มแสดงข้อมูลรายชื่อ
 
 gui.mainloop()
