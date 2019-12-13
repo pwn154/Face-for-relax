@@ -106,10 +106,10 @@ def change_state(value):
 
 show_frame()
 
-ButtonStart = Button(startstop_frame, width=20, bg='lightgreen', text='Start', command=lambda *args: change_state(1))
+ButtonStart = Button(startstop_frame, width=20, bg='lightgreen', text='Start', command=gui.destroy)
 ButtonStart.pack(side=LEFT, padx=20)#ปุ่มกดจับเวลา
 
-ButtonReset = Button(startstop_frame, width=20, bg='red', text='Reset', command=lambda *args: change_state(0))
+ButtonReset = Button(startstop_frame, width=20, bg='red', text='Reset', command=gui.destroy)
 ButtonReset.pack(side=LEFT, padx=20)#ปุ่มหยุดโปรแกรม
 
 ButtonAbout = Button(aboutus_frame, text='About us', command=popup_showinfo)
