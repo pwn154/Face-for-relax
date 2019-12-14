@@ -7,50 +7,9 @@ from tkinter import ttk
 from PIL import Image, ImageTk
 from pygame import mixer
 
-faceCascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
-last_time = time.time()
-timecounter = 0
-state = 0
-
-cap = cv2.VideoCapture(0, cv2.CAP_DSHOW) # 0 = internal webcam, -1 = external webcam
-width, height = 800, 600
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
-
-mixer.init()
-
-gui = Tk()
-gui.title('Face For Relax')
-gui.option_add("*Font", "TkDefaultFont 16")
-
-lmain = Label(gui)
-lmain.grid(row=0, columnspan=2, padx=5, pady=5)
-
-timelabel = Label(gui, text=timecounter, font=("TkDefaultFont", 30))
-timelabel.grid(row=1, columnspan=2, pady=5)
-
-timeset_frame = Frame(gui)
-timeset_frame.grid(row=2, columnspan=2, pady=10)
-time_text = Label(timeset_frame, text="Time Settings: ").pack(side=LEFT)
-
-set_hour = ttk.Combobox(timeset_frame, values=list(range(24)), width=3, state="readonly")
-set_hour.current(0)
-set_hour.pack(side=LEFT, padx=5)
-hour_text = Label(timeset_frame, text="hr.").pack(side=LEFT)
-
-set_minute = ttk.Combobox(timeset_frame, values=list(range(60)), width=3, state="readonly")
-set_minute.current(0)
-set_minute.pack(side=LEFT, padx=5)
-minute_text = Label(timeset_frame, text="min.").pack(side=LEFT)
-
-set_second = ttk.Combobox(timeset_frame, values=list(range(60)), width=3, state="readonly")
-set_second.current(0)
-set_second.pack(side=LEFT, padx=5)
-second_text = Label(timeset_frame, text="s.").pack(side=LEFT)
-
 def draw_boundary(img, classifier, scaleFactor, minNeightbors, color, text): #color(BGR) >> Blue Green Red
     """วาดกรอบสี่เหลี่ยมเพื่อเป็นบล๊อคสำหรับตรวจจับใบหน้า"""
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) #แปลงภาพสีเป็นภาพขาวดำ
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) #แปลงภาพสีเป็นภาพขาวดำเพื่อใช้ในการ Detect ใบหน้า
     features = classifier.detectMultiScale(gray, scaleFactor, minNeightbors)
     coordinate = []
     for (x,y,w,h) in features:
@@ -60,7 +19,7 @@ def draw_boundary(img, classifier, scaleFactor, minNeightbors, color, text): #co
     return img, coordinate
 
 def detect(img, faceCascade):
-    """การตวจจับใบหน้า"""
+    """การตรวจจับใบหน้า"""
     img, coordinate = draw_boundary(img, faceCascade, 1.1, 10, (0,255,0), "Face")
     return img, coordinate
 
@@ -73,8 +32,8 @@ def popup_showinfo():
 62070147 Pattarapol Ngaorattanaphanthikun\n\
 62070154 Puwanut Janmee')
 
-def show_frame():
-    """show each frame and count time when in start state"""
+def process():
+    """count time when found face in start state"""
     global timecounter, last_time
     timerelax = int(set_hour.get())*3600 + int(set_minute.get())*60 + int(set_second.get())
     ret, frame = cap.read()
@@ -102,6 +61,10 @@ def show_frame():
     timeformat = str(datetime.timedelta(seconds=int(timecounter)))
     timelabel.configure(text="Timer: %s"%timeformat)
 
+    show_frame(frame)
+
+def show_frame(frame):
+    """Show each frame after process"""
     cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
     imgtk = ImageTk.PhotoImage(image = Image.fromarray(cv2image))
     lmain.imgtk = imgtk
@@ -112,21 +75,76 @@ def show_frame():
         delay = 100 #สามารถลด Delay ลงได้ แต่จะทำให้เกิดการประมวลผลถี่เกินความจำเป็น
     else:
         delay = 10
-    lmain.after(delay, show_frame)
+    lmain.after(delay, process)
 
 def change_state(value):
     global state
     state = value
 
-show_frame()
+#Set variables
+faceCascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
+last_time = time.time()
+timecounter = 0
+state = 0
 
+#Capture Video from webcam and set width, height of video
+cap = cv2.VideoCapture(0, cv2.CAP_DSHOW) # 0 = internal webcam, -1 = external webcam
+width, height = 800, 600
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
+
+#Used for playing sound
+mixer.init()
+
+#Create tkinter gui window
+gui = Tk()
+gui.title('Face For Relax')
+gui.option_add("*Font", "TkDefaultFont 16")
+
+#Create Label widget for Display video
+lmain = Label(gui)
+lmain.grid(row=0, columnspan=2, padx=5, pady=5)
+
+#Create Label widget for Display Recent Timer"""
+timelabel = Label(gui, text=timecounter, font=("TkDefaultFont", 30))
+timelabel.grid(row=1, columnspan=2, pady=5)
+
+#Set frame for display all time setting (To be able to use pack method in the frame)
+timeset_frame = Frame(gui)
+timeset_frame.grid(row=2, columnspan=2, pady=10)
+
+#show text
+time_text = Label(timeset_frame, text="Time Settings: ").pack(side=LEFT)
+
+#Create options for setting time (hour)
+set_hour = ttk.Combobox(timeset_frame, values=list(range(24)), width=3, state="readonly")
+set_hour.current(0)
+set_hour.pack(side=LEFT, padx=5)
+hour_text = Label(timeset_frame, text="hr.").pack(side=LEFT)
+
+#Options for minute
+set_minute = ttk.Combobox(timeset_frame, values=list(range(60)), width=3, state="readonly")
+set_minute.current(0)
+set_minute.pack(side=LEFT, padx=5)
+minute_text = Label(timeset_frame, text="min.").pack(side=LEFT)
+
+#Options for second
+set_second = ttk.Combobox(timeset_frame, values=list(range(60)), width=3, state="readonly")
+set_second.current(0)
+set_second.pack(side=LEFT, padx=5)
+second_text = Label(timeset_frame, text="s.").pack(side=LEFT)
+
+#Create Button for start count time
 ButtonStart = Button(gui, width=20, bg='lightgreen', text='Start', command=lambda *args: change_state(1))
-ButtonStart.grid(row=3, column=0, sticky=E, padx=5)#ปุ่มกดจับเวลา
+ButtonStart.grid(row=3, column=0, sticky=E, padx=5)
 
+#Button for Stop/Reset time
 ButtonReset = Button(gui, width=20, bg='red', text='Reset', command=lambda *args: change_state(0))
-ButtonReset.grid(row=3, column=1, sticky=W, padx=5)#ปุ่มหยุดโปรแกรม
+ButtonReset.grid(row=3, column=1, sticky=W, padx=5)
 
+#Button for show group member
 ButtonAbout = Button(gui, text='About us', command=popup_showinfo)
-ButtonAbout.grid(row=4, columnspan=2, pady=10)#ปุ่มแสดงข้อมูลรายชื่อ
+ButtonAbout.grid(row=4, columnspan=2, pady=10)
 
+process()
 gui.mainloop()
