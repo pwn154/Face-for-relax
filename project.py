@@ -101,48 +101,48 @@ gui = Tk()
 gui.title('Face For Relax')
 gui.option_add("*Font", "TkDefaultFont 16")
 
-#Create Label widget for Display video
+#Create Label widget in gui for Display video
 lmain = Label(gui)
 lmain.grid(row=0, columnspan=2, padx=5, pady=5)
 
-#Create Label widget for Display Recent Timer"""
+#Create Label widget in gui for Display Recent Timer"""
 timelabel = Label(gui, text=timecounter, font=("TkDefaultFont", 30))
 timelabel.grid(row=1, columnspan=2, pady=5)
 
-#Set frame for display all time setting (To be able to use pack method in the frame)
+#Set frame in gui for display all time setting (To be able to use pack method in the frame)
 timeset_frame = Frame(gui)
 timeset_frame.grid(row=2, columnspan=2, pady=10)
 
-#show text
+#show text in timeset_frame
 time_text = Label(timeset_frame, text="Time Settings: ").pack(side=LEFT)
 
-#Create options for setting time (hour)
+#Create options in timeset_frame for setting time (hour)
 set_hour = ttk.Combobox(timeset_frame, values=list(range(24)), width=3, state="readonly")
 set_hour.current(0)
 set_hour.pack(side=LEFT, padx=5)
 hour_text = Label(timeset_frame, text="hr.").pack(side=LEFT)
 
-#Options for minute
+#Options set minute intimeset_frame
 set_minute = ttk.Combobox(timeset_frame, values=list(range(60)), width=3, state="readonly")
 set_minute.current(0)
 set_minute.pack(side=LEFT, padx=5)
 minute_text = Label(timeset_frame, text="min.").pack(side=LEFT)
 
-#Options for second
+#Options set second in timeset_frame
 set_second = ttk.Combobox(timeset_frame, values=list(range(60)), width=3, state="readonly")
 set_second.current(0)
 set_second.pack(side=LEFT, padx=5)
 second_text = Label(timeset_frame, text="s.").pack(side=LEFT)
 
-#Create Button for start count time
+#Create Button in gui for start count time
 ButtonStart = Button(gui, width=20, bg='lightgreen', text='Start', command=lambda *args: change_state(1))
 ButtonStart.grid(row=3, column=0, sticky=E, padx=5)
 
-#Button for Stop/Reset time
+#Create Button in gui for Stop/Reset time
 ButtonReset = Button(gui, width=20, bg='red', text='Reset', command=lambda *args: change_state(0))
 ButtonReset.grid(row=3, column=1, sticky=W, padx=5)
 
-#Button for show group member
+#Create Button in gui for show group member
 ButtonAbout = Button(gui, text='About us', command=popup_showinfo)
 ButtonAbout.grid(row=4, columnspan=2, pady=10)
 
