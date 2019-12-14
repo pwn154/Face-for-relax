@@ -3,6 +3,7 @@ import time
 import datetime
 from tkinter import *
 from tkinter import messagebox
+from tkinter import ttk
 from PIL import Image, ImageTk
 from pygame import mixer
 
@@ -27,6 +28,25 @@ lmain.grid(row=0, columnspan=2, padx=5, pady=5)
 
 timelabel = Label(gui, text=timecounter, font=("TkDefaultFont", 30))
 timelabel.grid(row=1, columnspan=2, pady=5)
+
+timeset_frame = Frame(gui)
+timeset_frame.grid(row=2, columnspan=2, pady=10)
+time_text = Label(timeset_frame, text="Time Settings: ").pack(side=LEFT)
+
+set_hour = ttk.Combobox(timeset_frame, values=list(range(24)), width=3, state="readonly")
+set_hour.current(0)
+set_hour.pack(side=LEFT, padx=5)
+hour_text = Label(timeset_frame, text="hr.").pack(side=LEFT)
+
+set_minute = ttk.Combobox(timeset_frame, values=list(range(60)), width=3, state="readonly")
+set_minute.current(0)
+set_minute.pack(side=LEFT, padx=5)
+minute_text = Label(timeset_frame, text="min.").pack(side=LEFT)
+
+set_second = ttk.Combobox(timeset_frame, values=list(range(60)), width=3, state="readonly")
+set_second.current(0)
+set_second.pack(side=LEFT, padx=5)
+second_text = Label(timeset_frame, text="s.").pack(side=LEFT)
 
 def draw_boundary(img, classifier, scaleFactor, minNeightbors, color, text): #color(BGR) >> Blue Green Red
     """วาดกรอบสี่เหลี่ยมเพื่อเป็นบล๊อคสำหรับตรวจจับใบหน้า"""
@@ -56,10 +76,11 @@ def popup_showinfo():
 def show_frame():
     """show each frame and count time when in start state"""
     global timecounter, last_time
+    timerelax = int(set_hour.get())*3600 + int(set_minute.get())*60 + int(set_second.get())
     ret, frame = cap.read()
     if state == 1:#state Start
         frame, coordinate = detect(frame, faceCascade)
-        if timecounter <= 10:
+        if timecounter <= timerelax:
             if coordinate != []:
                 timecounter = time.time() - last_time #ระบุเวลาที่ผ่านไป
             else:
@@ -79,7 +100,7 @@ def show_frame():
         last_time = time.time()
 
     timeformat = str(datetime.timedelta(seconds=int(timecounter)))
-    timelabel.configure(text="Time: %s"%timeformat)
+    timelabel.configure(text="Timer: %s"%timeformat)
 
     cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
     imgtk = ImageTk.PhotoImage(image = Image.fromarray(cv2image))
@@ -100,12 +121,12 @@ def change_state(value):
 show_frame()
 
 ButtonStart = Button(gui, width=20, bg='lightgreen', text='Start', command=lambda *args: change_state(1))
-ButtonStart.grid(row=2, column=0, sticky=E, padx=5)#ปุ่มกดจับเวลา
+ButtonStart.grid(row=3, column=0, sticky=E, padx=5)#ปุ่มกดจับเวลา
 
 ButtonReset = Button(gui, width=20, bg='red', text='Reset', command=lambda *args: change_state(0))
-ButtonReset.grid(row=2, column=1, sticky=W, padx=5)#ปุ่มหยุดโปรแกรม
+ButtonReset.grid(row=3, column=1, sticky=W, padx=5)#ปุ่มหยุดโปรแกรม
 
 ButtonAbout = Button(gui, text='About us', command=popup_showinfo)
-ButtonAbout.grid(row=3, columnspan=2, pady=10)#ปุ่มแสดงข้อมูลรายชื่อ
+ButtonAbout.grid(row=4, columnspan=2, pady=10)#ปุ่มแสดงข้อมูลรายชื่อ
 
 gui.mainloop()
