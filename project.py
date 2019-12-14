@@ -11,7 +11,7 @@ last_time = time.time()
 timecounter = 0
 state = 0
 
-cap = cv2.VideoCapture(0) # 0 = internal webcam, -1 = external webcam
+cap = cv2.VideoCapture(0, cv2.CAP_DSHOW) # 0 = internal webcam, -1 = external webcam
 width, height = 800, 600
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
@@ -20,14 +20,13 @@ mixer.init()
 
 gui = Tk()
 gui.title('Face For Relax')
-#gui.configure(background='#ffffff')
-mlabel = Label(text="Face For Relax", fg="#FFFF00", bg='#000000').pack()
+gui.option_add("*Font", "TkDefaultFont 16")
 
 lmain = Label(gui)
-lmain.pack()
+lmain.pack(padx=5, pady=5)
 
-timelabel = Label(gui, text=timecounter, bg="lightblue", width=20, relief="solid")
-timelabel.pack(pady=10)
+timelabel = Label(gui, text=timecounter, font=("TkDefaultFont", 30))
+timelabel.pack(pady=5)
 
 startstop_frame = Frame(gui)
 startstop_frame.pack(pady=5)
