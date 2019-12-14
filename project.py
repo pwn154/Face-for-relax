@@ -23,16 +23,10 @@ gui.title('Face For Relax')
 gui.option_add("*Font", "TkDefaultFont 16")
 
 lmain = Label(gui)
-lmain.pack(padx=5, pady=5)
+lmain.grid(row=0, columnspan=2, padx=5, pady=5)
 
 timelabel = Label(gui, text=timecounter, font=("TkDefaultFont", 30))
-timelabel.pack(pady=5)
-
-startstop_frame = Frame(gui)
-startstop_frame.pack(pady=5)
-
-aboutus_frame = Frame(gui)
-aboutus_frame.pack(side=BOTTOM, pady=5)
+timelabel.grid(row=1, columnspan=2, pady=5)
 
 def draw_boundary(img, classifier, scaleFactor, minNeightbors, color, text): #color(BGR) >> Blue Green Red
     """วาดกรอบสี่เหลี่ยมเพื่อเป็นบล๊อคสำหรับตรวจจับใบหน้า"""
@@ -105,13 +99,13 @@ def change_state(value):
 
 show_frame()
 
-ButtonStart = Button(startstop_frame, width=20, bg='lightgreen', text='Start', command=lambda *args: change_state(1))
-ButtonStart.pack(side=LEFT, padx=20)#ปุ่มกดจับเวลา
+ButtonStart = Button(gui, width=20, bg='lightgreen', text='Start', command=lambda *args: change_state(1))
+ButtonStart.grid(row=2, column=0, sticky=E, padx=5)#ปุ่มกดจับเวลา
 
-ButtonReset = Button(startstop_frame, width=20, bg='red', text='Reset', command=lambda *args: change_state(0))
-ButtonReset.pack(side=LEFT, padx=20)#ปุ่มหยุดโปรแกรม
+ButtonReset = Button(gui, width=20, bg='red', text='Reset', command=lambda *args: change_state(0))
+ButtonReset.grid(row=2, column=1, sticky=W, padx=5)#ปุ่มหยุดโปรแกรม
 
-ButtonAbout = Button(aboutus_frame, text='About us', command=popup_showinfo)
-ButtonAbout.pack()#ปุ่มแสดงข้อมูลรายชื่อ
+ButtonAbout = Button(gui, text='About us', command=popup_showinfo)
+ButtonAbout.grid(row=3, columnspan=2, pady=10)#ปุ่มแสดงข้อมูลรายชื่อ
 
 gui.mainloop()
