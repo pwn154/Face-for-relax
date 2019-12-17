@@ -10,12 +10,14 @@ from pygame import mixer
 def draw_boundary(img, classifier, scaleFactor, minNeightbors, color, text): #color(BGR) >> Blue Green Red
     """วาดกรอบสี่เหลี่ยมเพื่อเป็นบล๊อคสำหรับตรวจจับใบหน้า"""
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) #แปลงภาพสีเป็นภาพขาวดำเพื่อใช้ในการ Detect ใบหน้า
-    features = classifier.detectMultiScale(gray, scaleFactor, minNeightbors)
+    features = classifier.detectMultiScale(gray, scaleFactor, minNeightbors) #นำรูปภาพไป Detect ถ้าพบใบหน้าจะ return พิกัด x,y,w,h
     coordinate = []
     for (x,y,w,h) in features:
         cv2.rectangle(img, (x,y), (x+w,y+h), color, 2) #(img, top-left corner, bot-right corner, color_border, thickness)
-        cv2.putText(img, text, (x,y-4), cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
+        cv2.putText(img, text, (x,y-4), cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2) #(img, text, origin, font, fontscale, color, thickness)
         coordinate = [x,y,w,h]
+    #ถ้ามีการพบใบหน้า coordinate = [x,y,w,h]
+    #ถ้าไม่พบใบหน้า coordinate = []
     return img, coordinate
 
 def detect(img, faceCascade):
@@ -35,16 +37,16 @@ def popup_showinfo():
 def process():
     """count time when found face in start state"""
     global timecounter, last_time
-    timerelax = int(set_hour.get())*3600 + int(set_minute.get())*60 + int(set_second.get())
-    ret, frame = cap.read()
+    timerelax = int(set_hour.get())*3600 + int(set_minute.get())*60 + int(set_second.get()) #คำนวณเวลาจากเวลาที่ผู้ใช้เลือก แปลงเป็นวินาที
+    ret, frame = cap.read() #อ่าน frame ของวิดีโอที่ Capture มาจากกล้อง
     if state == 1:#state Start
-        frame, coordinate = detect(frame, faceCascade)
-        if timecounter <= timerelax:
-            if coordinate != []:
+        frame, coordinate = detect(frame, faceCascade) #นำ frame ไป Detect ใบหน้า
+        if timecounter <= timerelax: #ตัวนับเวลายังไม่ถึงเวลาที่ผู้ใช้งานตั้งไว้
+            if coordinate != []: #ถ้าพบใบหน้า
                 timecounter = time.time() - last_time #ระบุเวลาที่ผ่านไป
-            else:
+            else: #ถ้าไม่พบใบหน้า
                 last_time = time.time() - timecounter
-        else:
+        else:#นับเวลาถึงเวลาที่ผู้ใช้งานตั้งไว้แล้ว
             mixer.music.load('Success_ding_sound.mp3')
             mixer.music.play()
             value = messagebox.askyesno(title='Face for relax', message='Are you going to rest?') #ตัวเลือก
@@ -58,6 +60,7 @@ def process():
         timecounter = 0
         last_time = time.time()
 
+    #นำเวลาไปทำให้อยู่ในรูป h:mm:ss และอัพเดท
     timeformat = str(datetime.timedelta(seconds=int(timecounter)))
     timelabel.configure(text="Timer: %s"%timeformat)
 
@@ -66,16 +69,20 @@ def process():
 def show_frame(frame):
     """Show each frame after process"""
     cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
+    #ต้องเปลี่ยน Channel สีเนื่องจาก OpenCV นำเสนอภาพด้วยสี Channel BGR (Blue, Green, Red)
+    #Tkinter นำเสนอภาพด้วยสี Channel RGB (Red, Green, Blue)
+
     imgtk = ImageTk.PhotoImage(image = Image.fromarray(cv2image))
     lmain.imgtk = imgtk
     lmain.configure(image=imgtk)
 
     # delay = time (milliseconds)
     if state == 1:
-        delay = 100 #สามารถลด Delay ลงได้ แต่จะทำให้เกิดการประมวลผลถี่เกินความจำเป็น
+        delay = 70 #สามารถลด Delay ลงได้ แต่จะทำให้เกิดการประมวลผลถี่เกินความจำเป็น
+
     else:
         delay = 10
-    lmain.after(delay, process)
+    lmain.after(delay, process) #หลังจากแสดงรูปแล้ว ให้ทำฟังก์ชัน process (ทำให้วนลูป)
 
 def change_state(value):
     global state
